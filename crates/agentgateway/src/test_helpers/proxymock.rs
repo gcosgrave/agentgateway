@@ -1068,6 +1068,7 @@ impl TestBind {
 			alpn: None,
 			subject_alt_names: None,
 			key_exchange_groups: None,
+			spiffe: false,
 		}
 		.try_into()
 		.unwrap();
@@ -1078,6 +1079,46 @@ impl TestBind {
 				io: Arc::new(Mutex::new(Some(io))),
 			})
 	}
+
+	/// Like [`serve_https`], but lets the caller supply the trust root and an optional client
+	/// certificate, so tests can drive mutual TLS — e.g. a SPIFFE listener that requires a client
+	/// SVID. Hostname verification is skipped (`insecure_host`) because SPIFFE SVIDs carry a
+	/// `spiffe://` URI SAN and no DNS SAN.
+	pub fn serve_https_client_auth(
+		&self,
+		bind_name: BindKey,
+		sni: Option<&str>,
+		root_pem: Vec<u8>,
+		client_cert_key_pem: Option<(Vec<u8>, Vec<u8>)>,
+	) -> Client<MemoryConnector, Body> {
+		let io = self.serve(bind_name);
+		let (cert, key) = match client_cert_key_pem {
+			Some((c, k)) => (Some(c), Some(k)),
+			None => (None, None),
+		};
+		let tls: BackendTLS = crate::http::backendtls::ResolvedBackendTLS {
+			cert,
+			key,
+			root: Some(root_pem),
+			hostname: sni.map(|s| s.to_string()),
+			insecure: false,
+			insecure_host: true,
+			alpn: None,
+			subject_alt_names: None,
+			key_exchange_groups: None,
+			spiffe: false,
+		}
+		.try_into()
+		.unwrap();
+
+		Client::builder(TokioExecutor::new())
+			.timer(TokioTimer::new())
+			.build(MemoryConnector {
+				tls_config: Some(tls),
+				io: Arc::new(Mutex::new(Some(io))),
+			})
+	}
+
 	// The need to split http/http2 is a hyper limit, not our proxy
 	pub fn serve_http2(&self, bind_name: BindKey) -> Client<MemoryConnector, Body> {
 		let io = self.serve(bind_name);
@@ -1233,11 +1274,38 @@ impl TestBind {
 
 pub fn setup_proxy_test(cfg: &str) -> anyhow::Result<TestBind> {
 	agent_core::telemetry::testing::setup_test_logging();
-	let config = crate::config::parse_config(cfg.to_string(), None)?;
+	// parse_config reads env vars; hold the env lock so config::tests that set them
+	// (e.g. DYNAMIC_CA_CERT_CACHE_CAPACITY) cannot race this harness.
+	let config = {
+		let _env = crate::config::lock_env_for_tests();
+		crate::config::parse_config(cfg.to_string(), None)?
+	};
 	Ok(setup_proxy_test_with_config(config))
 }
 
 pub fn setup_proxy_test_with_config(config: crate::Config) -> TestBind {
+	setup_proxy_test_with_config_and_spiffe(config, None)
+}
+
+/// Like [`setup_proxy_test`], but injects a `SpiffeClient` into [`ProxyInputs`] so SPIFFE-sourced
+/// listeners/backends can be exercised (e.g. a `tls: spiffe` listener that requires a client SVID).
+pub fn setup_proxy_test_with_spiffe(
+	cfg: &str,
+	spiffe: Option<Arc<crate::control::spiffe::SpiffeClient>>,
+) -> anyhow::Result<TestBind> {
+	agent_core::telemetry::testing::setup_test_logging();
+	// See setup_proxy_test for why parse_config runs under the env lock.
+	let config = {
+		let _env = crate::config::lock_env_for_tests();
+		crate::config::parse_config(cfg.to_string(), None)?
+	};
+	Ok(setup_proxy_test_with_config_and_spiffe(config, spiffe))
+}
+
+pub fn setup_proxy_test_with_config_and_spiffe(
+	config: crate::Config,
+	spiffe: Option<Arc<crate::control::spiffe::SpiffeClient>>,
+) -> TestBind {
 	let encoder = config.session_encoder.clone();
 	let stores = Stores::new(config.ipv6_enabled, config.threading_mode);
 	let client = client::Client::new(&config.dns, None, Default::default(), None);
@@ -1253,6 +1321,7 @@ pub fn setup_proxy_test_with_config(config: crate::Config) -> TestBind {
 		admin: None,
 		upstream: client.clone(),
 		ca: None,
+		spiffe,
 
 		mcp_state: mcp::App::new(stores.clone(), encoder),
 	});

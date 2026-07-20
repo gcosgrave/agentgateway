@@ -1918,6 +1918,22 @@ spec:
                                                               maxItems: 1
                                                               type: array
                                                               x-kubernetes-list-type: atomic
+                                                            certificateSource:
+                                                              default: Inline
+                                                              description: |-
+                                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                                  roots when unset).
+                                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                                  `AgentgatewayParameters.spec.spiffe`).
+                                                              enum:
+                                                              - Inline
+                                                              - SPIFFE
+                                                              type: string
                                                             insecureSkipVerify:
                                                               description: |-
                                                                 Originates TLS but skips verification of the backend's certificate.
@@ -2035,6 +2051,16 @@ spec:
                                                             rule: 'has(self.insecureSkipVerify)
                                                               ? !has(self.verifySubjectAltNames)
                                                               : true'
+                                                          - message: certificateSource
+                                                              SPIFFE may not be combined
+                                                              with mtlsCertificateRef,
+                                                              caCertificateRefs, or
+                                                              insecureSkipVerify
+                                                            rule: '!has(self.certificateSource)
+                                                              || self.certificateSource
+                                                              != ''SPIFFE'' || (!has(self.mtlsCertificateRef)
+                                                              && !has(self.caCertificateRefs)
+                                                              && !has(self.insecureSkipVerify))'
                                                           - message: at most one of
                                                               the fields in [verifySubjectAltNames
                                                               insecureSkipVerify]
@@ -3447,6 +3473,22 @@ spec:
                                                               maxItems: 1
                                                               type: array
                                                               x-kubernetes-list-type: atomic
+                                                            certificateSource:
+                                                              default: Inline
+                                                              description: |-
+                                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                                  roots when unset).
+                                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                                  `AgentgatewayParameters.spec.spiffe`).
+                                                              enum:
+                                                              - Inline
+                                                              - SPIFFE
+                                                              type: string
                                                             insecureSkipVerify:
                                                               description: |-
                                                                 Originates TLS but skips verification of the backend's certificate.
@@ -3564,6 +3606,16 @@ spec:
                                                             rule: 'has(self.insecureSkipVerify)
                                                               ? !has(self.verifySubjectAltNames)
                                                               : true'
+                                                          - message: certificateSource
+                                                              SPIFFE may not be combined
+                                                              with mtlsCertificateRef,
+                                                              caCertificateRefs, or
+                                                              insecureSkipVerify
+                                                            rule: '!has(self.certificateSource)
+                                                              || self.certificateSource
+                                                              != ''SPIFFE'' || (!has(self.mtlsCertificateRef)
+                                                              && !has(self.caCertificateRefs)
+                                                              && !has(self.insecureSkipVerify))'
                                                           - message: at most one of
                                                               the fields in [verifySubjectAltNames
                                                               insecureSkipVerify]
@@ -4972,6 +5024,22 @@ spec:
                                                               maxItems: 1
                                                               type: array
                                                               x-kubernetes-list-type: atomic
+                                                            certificateSource:
+                                                              default: Inline
+                                                              description: |-
+                                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                                  roots when unset).
+                                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                                  `AgentgatewayParameters.spec.spiffe`).
+                                                              enum:
+                                                              - Inline
+                                                              - SPIFFE
+                                                              type: string
                                                             insecureSkipVerify:
                                                               description: |-
                                                                 Originates TLS but skips verification of the backend's certificate.
@@ -5089,6 +5157,16 @@ spec:
                                                             rule: 'has(self.insecureSkipVerify)
                                                               ? !has(self.verifySubjectAltNames)
                                                               : true'
+                                                          - message: certificateSource
+                                                              SPIFFE may not be combined
+                                                              with mtlsCertificateRef,
+                                                              caCertificateRefs, or
+                                                              insecureSkipVerify
+                                                            rule: '!has(self.certificateSource)
+                                                              || self.certificateSource
+                                                              != ''SPIFFE'' || (!has(self.mtlsCertificateRef)
+                                                              && !has(self.caCertificateRefs)
+                                                              && !has(self.insecureSkipVerify))'
                                                           - message: at most one of
                                                               the fields in [verifySubjectAltNames
                                                               insecureSkipVerify]
@@ -6729,6 +6807,22 @@ spec:
                                                               maxItems: 1
                                                               type: array
                                                               x-kubernetes-list-type: atomic
+                                                            certificateSource:
+                                                              default: Inline
+                                                              description: |-
+                                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                                  roots when unset).
+                                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                                  `AgentgatewayParameters.spec.spiffe`).
+                                                              enum:
+                                                              - Inline
+                                                              - SPIFFE
+                                                              type: string
                                                             insecureSkipVerify:
                                                               description: |-
                                                                 Originates TLS but skips verification of the backend's certificate.
@@ -6846,6 +6940,16 @@ spec:
                                                             rule: 'has(self.insecureSkipVerify)
                                                               ? !has(self.verifySubjectAltNames)
                                                               : true'
+                                                          - message: certificateSource
+                                                              SPIFFE may not be combined
+                                                              with mtlsCertificateRef,
+                                                              caCertificateRefs, or
+                                                              insecureSkipVerify
+                                                            rule: '!has(self.certificateSource)
+                                                              || self.certificateSource
+                                                              != ''SPIFFE'' || (!has(self.mtlsCertificateRef)
+                                                              && !has(self.caCertificateRefs)
+                                                              && !has(self.insecureSkipVerify))'
                                                           - message: at most one of
                                                               the fields in [verifySubjectAltNames
                                                               insecureSkipVerify]
@@ -8258,6 +8362,22 @@ spec:
                                                               maxItems: 1
                                                               type: array
                                                               x-kubernetes-list-type: atomic
+                                                            certificateSource:
+                                                              default: Inline
+                                                              description: |-
+                                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                                  roots when unset).
+                                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                                  `AgentgatewayParameters.spec.spiffe`).
+                                                              enum:
+                                                              - Inline
+                                                              - SPIFFE
+                                                              type: string
                                                             insecureSkipVerify:
                                                               description: |-
                                                                 Originates TLS but skips verification of the backend's certificate.
@@ -8375,6 +8495,16 @@ spec:
                                                             rule: 'has(self.insecureSkipVerify)
                                                               ? !has(self.verifySubjectAltNames)
                                                               : true'
+                                                          - message: certificateSource
+                                                              SPIFFE may not be combined
+                                                              with mtlsCertificateRef,
+                                                              caCertificateRefs, or
+                                                              insecureSkipVerify
+                                                            rule: '!has(self.certificateSource)
+                                                              || self.certificateSource
+                                                              != ''SPIFFE'' || (!has(self.mtlsCertificateRef)
+                                                              && !has(self.caCertificateRefs)
+                                                              && !has(self.insecureSkipVerify))'
                                                           - message: at most one of
                                                               the fields in [verifySubjectAltNames
                                                               insecureSkipVerify]
@@ -9935,6 +10065,22 @@ spec:
                                         maxItems: 1
                                         type: array
                                         x-kubernetes-list-type: atomic
+                                      certificateSource:
+                                        default: Inline
+                                        description: |-
+                                          Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                          * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                            roots when unset).
+                                          * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                            (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                            `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                            `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                            `AgentgatewayParameters.spec.spiffe`).
+                                        enum:
+                                        - Inline
+                                        - SPIFFE
+                                        type: string
                                       insecureSkipVerify:
                                         description: |-
                                           Originates TLS but skips verification of the backend's certificate.
@@ -10040,6 +10186,12 @@ spec:
                                         may not be set together
                                       rule: 'has(self.insecureSkipVerify) ? !has(self.verifySubjectAltNames)
                                         : true'
+                                    - message: certificateSource SPIFFE may not be
+                                        combined with mtlsCertificateRef, caCertificateRefs,
+                                        or insecureSkipVerify
+                                      rule: '!has(self.certificateSource) || self.certificateSource
+                                        != ''SPIFFE'' || (!has(self.mtlsCertificateRef)
+                                        && !has(self.caCertificateRefs) && !has(self.insecureSkipVerify))'
                                     - message: at most one of the fields in [verifySubjectAltNames
                                         insecureSkipVerify] may be set
                                       rule: '[has(self.verifySubjectAltNames),has(self.insecureSkipVerify)].filter(x,x==true).size()
@@ -12101,6 +12253,22 @@ spec:
                                       maxItems: 1
                                       type: array
                                       x-kubernetes-list-type: atomic
+                                    certificateSource:
+                                      default: Inline
+                                      description: |-
+                                        Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                        * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                          roots when unset).
+                                        * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                          (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                          `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                          `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                          `AgentgatewayParameters.spec.spiffe`).
+                                      enum:
+                                      - Inline
+                                      - SPIFFE
+                                      type: string
                                     insecureSkipVerify:
                                       description: |-
                                         Originates TLS but skips verification of the backend's certificate.
@@ -12206,6 +12374,12 @@ spec:
                                       may not be set together
                                     rule: 'has(self.insecureSkipVerify) ? !has(self.verifySubjectAltNames)
                                       : true'
+                                  - message: certificateSource SPIFFE may not be combined
+                                      with mtlsCertificateRef, caCertificateRefs,
+                                      or insecureSkipVerify
+                                    rule: '!has(self.certificateSource) || self.certificateSource
+                                      != ''SPIFFE'' || (!has(self.mtlsCertificateRef)
+                                      && !has(self.caCertificateRefs) && !has(self.insecureSkipVerify))'
                                   - message: at most one of the fields in [verifySubjectAltNames
                                       insecureSkipVerify] may be set
                                     rule: '[has(self.verifySubjectAltNames),has(self.insecureSkipVerify)].filter(x,x==true).size()
@@ -13640,6 +13814,22 @@ spec:
                                               maxItems: 1
                                               type: array
                                               x-kubernetes-list-type: atomic
+                                            certificateSource:
+                                              default: Inline
+                                              description: |-
+                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                  roots when unset).
+                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                  `AgentgatewayParameters.spec.spiffe`).
+                                              enum:
+                                              - Inline
+                                              - SPIFFE
+                                              type: string
                                             insecureSkipVerify:
                                               description: |-
                                                 Originates TLS but skips verification of the backend's certificate.
@@ -13746,6 +13936,13 @@ spec:
                                               may not be set together
                                             rule: 'has(self.insecureSkipVerify) ?
                                               !has(self.verifySubjectAltNames) : true'
+                                          - message: certificateSource SPIFFE may
+                                              not be combined with mtlsCertificateRef,
+                                              caCertificateRefs, or insecureSkipVerify
+                                            rule: '!has(self.certificateSource) ||
+                                              self.certificateSource != ''SPIFFE''
+                                              || (!has(self.mtlsCertificateRef) &&
+                                              !has(self.caCertificateRefs) && !has(self.insecureSkipVerify))'
                                           - message: at most one of the fields in
                                               [verifySubjectAltNames insecureSkipVerify]
                                               may be set
@@ -14961,6 +15158,22 @@ spec:
                                               maxItems: 1
                                               type: array
                                               x-kubernetes-list-type: atomic
+                                            certificateSource:
+                                              default: Inline
+                                              description: |-
+                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                  roots when unset).
+                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                  `AgentgatewayParameters.spec.spiffe`).
+                                              enum:
+                                              - Inline
+                                              - SPIFFE
+                                              type: string
                                             insecureSkipVerify:
                                               description: |-
                                                 Originates TLS but skips verification of the backend's certificate.
@@ -15067,6 +15280,13 @@ spec:
                                               may not be set together
                                             rule: 'has(self.insecureSkipVerify) ?
                                               !has(self.verifySubjectAltNames) : true'
+                                          - message: certificateSource SPIFFE may
+                                              not be combined with mtlsCertificateRef,
+                                              caCertificateRefs, or insecureSkipVerify
+                                            rule: '!has(self.certificateSource) ||
+                                              self.certificateSource != ''SPIFFE''
+                                              || (!has(self.mtlsCertificateRef) &&
+                                              !has(self.caCertificateRefs) && !has(self.insecureSkipVerify))'
                                           - message: at most one of the fields in
                                               [verifySubjectAltNames insecureSkipVerify]
                                               may be set
@@ -16277,6 +16497,22 @@ spec:
                                               maxItems: 1
                                               type: array
                                               x-kubernetes-list-type: atomic
+                                            certificateSource:
+                                              default: Inline
+                                              description: |-
+                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                  roots when unset).
+                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                  `AgentgatewayParameters.spec.spiffe`).
+                                              enum:
+                                              - Inline
+                                              - SPIFFE
+                                              type: string
                                             insecureSkipVerify:
                                               description: |-
                                                 Originates TLS but skips verification of the backend's certificate.
@@ -16383,6 +16619,13 @@ spec:
                                               may not be set together
                                             rule: 'has(self.insecureSkipVerify) ?
                                               !has(self.verifySubjectAltNames) : true'
+                                          - message: certificateSource SPIFFE may
+                                              not be combined with mtlsCertificateRef,
+                                              caCertificateRefs, or insecureSkipVerify
+                                            rule: '!has(self.certificateSource) ||
+                                              self.certificateSource != ''SPIFFE''
+                                              || (!has(self.mtlsCertificateRef) &&
+                                              !has(self.caCertificateRefs) && !has(self.insecureSkipVerify))'
                                           - message: at most one of the fields in
                                               [verifySubjectAltNames insecureSkipVerify]
                                               may be set
@@ -17819,6 +18062,22 @@ spec:
                                               maxItems: 1
                                               type: array
                                               x-kubernetes-list-type: atomic
+                                            certificateSource:
+                                              default: Inline
+                                              description: |-
+                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                  roots when unset).
+                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                  `AgentgatewayParameters.spec.spiffe`).
+                                              enum:
+                                              - Inline
+                                              - SPIFFE
+                                              type: string
                                             insecureSkipVerify:
                                               description: |-
                                                 Originates TLS but skips verification of the backend's certificate.
@@ -17925,6 +18184,13 @@ spec:
                                               may not be set together
                                             rule: 'has(self.insecureSkipVerify) ?
                                               !has(self.verifySubjectAltNames) : true'
+                                          - message: certificateSource SPIFFE may
+                                              not be combined with mtlsCertificateRef,
+                                              caCertificateRefs, or insecureSkipVerify
+                                            rule: '!has(self.certificateSource) ||
+                                              self.certificateSource != ''SPIFFE''
+                                              || (!has(self.mtlsCertificateRef) &&
+                                              !has(self.caCertificateRefs) && !has(self.insecureSkipVerify))'
                                           - message: at most one of the fields in
                                               [verifySubjectAltNames insecureSkipVerify]
                                               may be set
@@ -19140,6 +19406,22 @@ spec:
                                               maxItems: 1
                                               type: array
                                               x-kubernetes-list-type: atomic
+                                            certificateSource:
+                                              default: Inline
+                                              description: |-
+                                                Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                                                * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                                                  roots when unset).
+                                                * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                                                  (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                                                  `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                                                  `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                                                  `AgentgatewayParameters.spec.spiffe`).
+                                              enum:
+                                              - Inline
+                                              - SPIFFE
+                                              type: string
                                             insecureSkipVerify:
                                               description: |-
                                                 Originates TLS but skips verification of the backend's certificate.
@@ -19246,6 +19528,13 @@ spec:
                                               may not be set together
                                             rule: 'has(self.insecureSkipVerify) ?
                                               !has(self.verifySubjectAltNames) : true'
+                                          - message: certificateSource SPIFFE may
+                                              not be combined with mtlsCertificateRef,
+                                              caCertificateRefs, or insecureSkipVerify
+                                            rule: '!has(self.certificateSource) ||
+                                              self.certificateSource != ''SPIFFE''
+                                              || (!has(self.mtlsCertificateRef) &&
+                                              !has(self.caCertificateRefs) && !has(self.insecureSkipVerify))'
                                           - message: at most one of the fields in
                                               [verifySubjectAltNames insecureSkipVerify]
                                               may be set
@@ -21409,6 +21698,22 @@ spec:
                         maxItems: 1
                         type: array
                         x-kubernetes-list-type: atomic
+                      certificateSource:
+                        default: Inline
+                        description: |-
+                          Source for the gateway's client identity and trust roots when originating TLS to the backend.
+
+                          * `Inline` (default) uses `mtlsCertificateRef`/`caCertificateRefs` (or the system trust
+                            roots when unset).
+                          * `SPIFFE` sources the gateway's X.509-SVID and trust bundle from the SPIFFE Workload API
+                            (mutual TLS). `mtlsCertificateRef`, `caCertificateRefs`, and
+                            `insecureSkipVerify` may not be set in this mode; pin expected upstream SPIFFE IDs with
+                            `verifySubjectAltNames`. Requires the gateway-wide SPIFFE integration (see
+                            `AgentgatewayParameters.spec.spiffe`).
+                        enum:
+                        - Inline
+                        - SPIFFE
+                        type: string
                       insecureSkipVerify:
                         description: |-
                           Originates TLS but skips verification of the backend's certificate.
@@ -21511,6 +21816,11 @@ spec:
                         be set together
                       rule: 'has(self.insecureSkipVerify) ? !has(self.verifySubjectAltNames)
                         : true'
+                    - message: certificateSource SPIFFE may not be combined with mtlsCertificateRef,
+                        caCertificateRefs, or insecureSkipVerify
+                      rule: '!has(self.certificateSource) || self.certificateSource
+                        != ''SPIFFE'' || (!has(self.mtlsCertificateRef) && !has(self.caCertificateRefs)
+                        && !has(self.insecureSkipVerify))'
                     - message: at most one of the fields in [verifySubjectAltNames
                         insecureSkipVerify] may be set
                       rule: '[has(self.verifySubjectAltNames),has(self.insecureSkipVerify)].filter(x,x==true).size()
